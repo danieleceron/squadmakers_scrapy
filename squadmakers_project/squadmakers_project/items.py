@@ -15,3 +15,4 @@ class turismoItem(scrapy.Item):
     itinerary_kmz_map = scrapy.Field()
     document_id = scrapy.Field()
     itinerary_description = scrapy.Field()
+    step_by_step_routes = scrapy.Field()

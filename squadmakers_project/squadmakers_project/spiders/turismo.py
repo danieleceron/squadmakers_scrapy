@@ -68,6 +68,13 @@ class TurismoSpider(scrapy.Spider):
             match = re.search(r"url\('(?P<img_url>.+)'\)\;$", style)
             return match.group('img_url')
 
+    def get_info(self, place: BeautifulSoup) -> str:
+        title = place.find('div', {'id': 'texto'}).get_text()
+        description_raw = place.find('div', {'class': 'uk-padding descripcion-etapa'})
+        description_raw_ = [p.get_text() for p in description_raw.find_all('p')]
+        description = '\n'.join(description_raw_)
+        return f'{title}\n{description}\n\n'
+
     def _get_route_title(self, itinerary: BeautifulSoup) -> str:
         return itinerary.find('h1', {'class': 'nivel1-titulo'}).get_text()
     
@@ -101,6 +108,16 @@ class TurismoSpider(scrapy.Spider):
         if tag := itinerary.find('div', {'class': "uk-width-1-2@m uk-margin-medium-bottom descripcion-etapa"}):
             raw_description = [p.get_text() for p in tag.find_all('p')]
             return '\n'.join(raw_description)
+    
+    def _get_rutas_paso_paso(self, itinerary: BeautifulSoup) -> str:
+        info = ''
+        if ruta_paso_paso := itinerary.find('h2', {'class':'nivel2-titulo'}):
+            container = ruta_paso_paso.find_next('div',
+            {'class': 'uk-child-width-1-1@m uk-margin-large-bottom uk-margin-remove-left uk-padding-remove-left'})
+            places = container.find_all('div', {'class': 'uk-margin-remove-left uk-padding-remove-left uk-width-1-2@m'})
+            for place in places:
+                info += self.get_info(place)
+            return info
 
     def get_item(self, route_soup: BeautifulSoup, itinerary: BeautifulSoup, itinerary_url:str) -> turismoItem:
         item = turismoItem()
@@ -112,6 +129,7 @@ class TurismoSpider(scrapy.Spider):
         item['itinerary_kmz_map'] = self._get_map(itinerary, 'KMZ')
         item['document_id'] = self._get_document_id(itinerary_url)
         item['itinerary_description'] = self._get_itinerary_description(itinerary)
+        item['step_by_step_routes'] = self._get_rutas_paso_paso(itinerary)
         return item
 
     def parse(self, _):
