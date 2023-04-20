@@ -6,7 +6,12 @@
 import scrapy
 
 
-class SquadmakersProjectItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class turismoItem(scrapy.Item):
+    route_title = scrapy.Field()
+    sub_route_title = scrapy.Field()
+    route_description = scrapy.Field()
+    map_img = scrapy.Field()
+    itinerary_gpx_map = scrapy.Field()
+    itinerary_kmz_map = scrapy.Field()
+    document_id = scrapy.Field()
+    itinerary_description = scrapy.Field()
