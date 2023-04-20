@@ -62,9 +62,11 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "squadmakers_project.pipelines.SquadmakersProjectPipeline": 300,
-#}
+ITEM_PIPELINES = {
+    "squadmakers_project.pipelines.removeEmptyFieldsPipeline": 50,
+    "squadmakers_project.pipelines.saveContents": 100,
+    "squadmakers_project.pipelines.jsonExporterPipeline": 150,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
